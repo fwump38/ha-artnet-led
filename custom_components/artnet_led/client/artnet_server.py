@@ -210,10 +210,22 @@ class ArtNetServer(asyncio.DatagramProtocol):
         server_event = loop.create_datagram_endpoint(lambda: self, local_addr=('0.0.0.0', ARTNET_PORT))
 
         if self._polling:
-            self.__hass.async_create_background_task(self.start_poll_loop(), "Art-Net polling loop")
+            self._poll_task = self.__hass.async_create_background_task(self.start_poll_loop(), "Art-Net polling loop")
         log.info("ArtNet server started")
 
         return self.__hass.async_create_task(server_event)
+
+    def stop_server(self):
+        poll_task = getattr(self, "_poll_task", None)
+        if poll_task is not None:
+            poll_task.cancel()
+            self._poll_task = None
+
+        transport = getattr(self, "_transport", None)
+        if transport is not None:
+            transport.close()
+            self._transport = None
+        log.info("ArtNet server stopped")
 
     async def start_poll_loop(self):
         while True:
@@ -365,6 +377,7 @@ class ArtNetServer(asyncio.DatagramProtocol):
 
     def connection_made(self, transport: transports.DatagramTransport) -> None:
         self.startup_time = datetime.datetime.now()
+        self._transport = transport
         log.debug("Server connection made")
         super().connection_made(transport)
 

@@ -1,0 +1,154 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Art-Net / DMX node",
+        "description": "Set up a DMX gateway. You'll add its lights afterwards from the integration page.",
+        "data": {
+          "node_type": "Protocol",
+          "host": "Host",
+          "port": "Port",
+          "host_override": "Send to a different host",
+          "max_fps": "Max frames per second",
+          "refresh_every": "Refresh interval",
+          "send_partial_universe": "Send partial universe"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the node. Not needed for the Art-Net controller.",
+          "port": "Leave empty for the protocol default (6454 Art-Net, 5568 sACN, 6038 KiNET).",
+          "host_override": "Actual address packets are sent to, if different from Host (Host stays the identity of the node).",
+          "refresh_every": "Seconds between resending values when no fade is running. 0 disables.",
+          "send_partial_universe": "Disable if your controller only accepts full 512-channel frames."
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure node",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "host_override": "Send to a different host",
+          "max_fps": "Max frames per second",
+          "refresh_every": "Refresh interval",
+          "send_partial_universe": "Send partial universe"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the node. Not needed for the Art-Net controller.",
+          "port": "Leave empty for the protocol default.",
+          "host_override": "Actual address packets are sent to, if different from Host.",
+          "refresh_every": "Seconds between resending values when no fade is running. 0 disables.",
+          "send_partial_universe": "Disable if your controller only accepts full 512-channel frames."
+        }
+      }
+    },
+    "error": {
+      "host_required": "A host is required for this protocol."
+    },
+    "abort": {
+      "already_configured": "This node is already configured.",
+      "reconfigure_successful": "Node updated."
+    }
+  },
+  "config_subentries": {
+    "light": {
+      "initiate_flow": {
+        "user": "Add light",
+        "reconfigure": "Reconfigure light"
+      },
+      "entry_type": "Light",
+      "step": {
+        "user": {
+          "title": "Add light",
+          "data": {
+            "name": "Name",
+            "type": "Type",
+            "universe": "Universe",
+            "channel": "First channel"
+          },
+          "data_description": {
+            "channel": "First DMX channel of the light (1-512)."
+          }
+        },
+        "reconfigure": {
+          "title": "Reconfigure light",
+          "data": {
+            "name": "Name",
+            "type": "Type",
+            "universe": "Universe",
+            "channel": "First channel"
+          },
+          "data_description": {
+            "channel": "First DMX channel of the light (1-512)."
+          }
+        },
+        "details": {
+          "title": "Light details",
+          "data": {
+            "transition": "Default transition",
+            "output_correction": "Output correction",
+            "channel_size": "Channel size",
+            "byte_order": "Byte order",
+            "min_temp": "Warmest temperature",
+            "max_temp": "Coldest temperature",
+            "channel_setup": "Channel setup"
+          },
+          "data_description": {
+            "transition": "Default fade duration. Overridden by the transition sent from Home Assistant.",
+            "output_correction": "Dimming curve. Empty means linear.",
+            "channel_setup": "Channel layout, e.g. `rgbw` or `W,r,128,b`. Leave empty for the default of this type."
+          }
+        }
+      },
+      "error": {
+        "channel_in_use": "Another light already starts on this universe and channel.",
+        "invalid_channel_setup": "The channel setup contains letters that this light type doesn't support."
+      },
+      "abort": {
+        "reconfigure_successful": "Light updated."
+      }
+    }
+  },
+  "selector": {
+    "node_type": {
+      "options": {
+        "artnet-direct": "Art-Net (direct to node)",
+        "artnet-controller": "Art-Net controller (auto-discovery, DMX input)",
+        "sacn": "sACN (E1.31)",
+        "kinet": "KiNET"
+      }
+    },
+    "type": {
+      "options": {
+        "dimmer": "Dimmer",
+        "rgb": "RGB",
+        "color_temp": "Color temperature (cool/warm white)",
+        "rgbw": "RGBW",
+        "rgbww": "RGBWW",
+        "binary": "Binary",
+        "fixed": "Fixed value",
+        "xy": "XY color"
+      }
+    },
+    "output_correction": {
+      "options": {
+        "linear": "Linear",
+        "quadratic": "Quadratic",
+        "cubic": "Cubic",
+        "quadruple": "Quadruple"
+      }
+    },
+    "channel_size": {
+      "options": {
+        "8bit": "8 bit",
+        "16bit": "16 bit",
+        "24bit": "24 bit",
+        "32bit": "32 bit"
+      }
+    },
+    "byte_order": {
+      "options": {
+        "big": "Big endian",
+        "little": "Little endian"
+      }
+    }
+  }
+}

@@ -55,6 +55,9 @@ class ArtNetController(BaseNode):
     def start(self):
         return self.__server.start_server()
 
+    def stop(self):
+        self.__server.stop_server()
+
     def get_universe(self, nr: int) -> UniverseBridge:
         return super().get_universe(nr)
 

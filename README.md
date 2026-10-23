@@ -26,20 +26,40 @@ The DMX integration for Home Assistant allows you to send DMX values to an [Art-
 
 1. Open HACS
 2. Open the options in the top right and select _Custom repositories_
-3. Enter this repository's URL (`https://github.com/Breina/ha-artnet-led`) under the Category _Integration_.
+3. Enter this repository's URL (`https://github.com/fwump38/ha-artnet-led`) under the Category _Integration_.
 4. Press _Add_
 5. _+ EXPLORE & DOWNLOAD REPOSITORIES_
 6. Find _Art-net LED Lighting for DMX_ in this list
 7. _DOWNLOAD THIS REPOSITORY WITH HACS_
 8. _DOWNLOAD_
 9. Restart Home Assistant (_Settings_ > _System_ >  _RESTART_)
+10. Go to _Settings_ > _Devices & services_ > _Add integration_ and pick **DMX Artnet integration** (see [Configuration](#configuration))
 
 ## Configuration
 
 hass-dmx is a community supported Home Assistant integration, if you have any questions you can discuss with the [Home Assistant DMX Community](https://community.home-assistant.io/t/dmx-lighting/2248).
 
-artnet-led lighting is configured in the `configuration.yaml` file under the *light* domain.
+### Setting up through the UI
 
+Requires Home Assistant 2025.3 or newer.
+
+1. _Settings_ > _Devices & services_ > _Add integration_ > **DMX Artnet integration**.
+2. Enter the node: protocol, host, and optionally port, frame rate, refresh interval. Each node (DMX gateway) is one entry.
+   The **Art-Net controller** protocol needs no host and can only be added once.
+3. On the node's entry, use **Add light** for every light: name, type, universe and first channel, then the details
+   (transition, output correction, channel size, byte order, color temperature range and
+   [channel_setup](#channel_setup)). Use the light's cog to change or delete it later; node settings are under
+   _Reconfigure_. Changes reload the node automatically.
+
+The settings below are explained in terms of the YAML names, which match the UI fields. Output correction is set per
+light in the UI. In `channel_setup`, separate a mix of letters and fixed numbers with commas, e.g. `W,r,128,b`.
+
+### Migrating from `configuration.yaml`
+
+An existing `light: - platform: artnet_led` block is imported into the UI automatically on the first start of this
+version, keeping the same entities and unique IDs (a universe-level `output_correction` is copied onto each light
+that doesn't set its own). After checking _Devices & services_, remove the block from `configuration.yaml`.
+YAML is deprecated and will be removed in a future version. It still looks like this:
 
 Example:
 

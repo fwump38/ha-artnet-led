@@ -1,4 +1,5 @@
 {
-    "name": "Art-net LED Lighting for DMX",
-    "render_readme": true
-  }
+  "name": "Art-net LED Lighting for DMX",
+  "render_readme": true,
+  "homeassistant": "2025.3.0"
+}
