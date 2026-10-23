@@ -230,8 +230,9 @@ class LightSubentryFlow(ConfigSubentryFlow):
             else:
                 data.pop(CONF_DEVICE_MIN_TEMP, None)
                 data.pop(CONF_DEVICE_MAX_TEMP, None)
+            # An optional field left empty is absent from user_input: drop any value kept from before.
             for key in (CONF_OUTPUT_CORRECTION, CONF_CHANNEL_SETUP):
-                if not data.get(key):
+                if not user_input.get(key):
                     data.pop(key, None)
 
             setup = parse_channel_setup(data.get(CONF_CHANNEL_SETUP))

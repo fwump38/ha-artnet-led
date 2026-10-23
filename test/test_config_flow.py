@@ -89,3 +89,27 @@ async def test_entry_creates_lights_and_unloads(hass, fake_node):
     assert await hass.config_entries.async_unload(entry.entry_id)
     fake_node.__aexit__.assert_awaited_once()
     await hass.async_block_till_done()
+
+
+async def test_reconfigure_clears_optional_fields(hass):
+    """Emptying channel_setup/output_correction while reconfiguring must remove the stored value."""
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": SOURCE_IMPORT}, data=YAML)
+    entry = result["result"]
+    await hass.async_block_till_done()
+    desk = next(s for s in entry.subentries.values() if s.data["name"] == "Desk")
+    hass.config_entries.async_update_subentry(
+        entry, desk, data={**desk.data, "type": "rgbw", "channel_setup": "uUd", "output_correction": "cubic"})
+    await hass.async_block_till_done()
+
+    flow = await hass.config_entries.subentries.async_init(
+        (entry.entry_id, "light"), context={"source": "reconfigure", "subentry_id": desk.subentry_id})
+    flow = await hass.config_entries.subentries.async_configure(
+        flow["flow_id"], {"name": "Desk", "type": "rgbw", "universe": 0, "channel": 1})
+    assert flow["step_id"] == "details"
+    flow = await hass.config_entries.subentries.async_configure(
+        flow["flow_id"], {"transition": 0, "channel_size": "8bit", "byte_order": "big"})
+    assert flow["type"] is FlowResultType.ABORT
+
+    data = entry.subentries[desk.subentry_id].data
+    assert "channel_setup" not in data
+    assert "output_correction" not in data
